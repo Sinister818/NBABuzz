@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.5
-  http: ^0.13.6
+  http: ^0.13.4
   provider: ^6.1.0
   cached_network_image: ^3.2.3
   url_launcher: ^6.1.7
@@ -29,6 +29,7 @@ flutter:
 
   assets:
     - assets/images/bball.png
+    - assets/images/lightning.jpg
 
 flutter_native_splash:
   color: "#ffffff"  # Background color for splash screen
