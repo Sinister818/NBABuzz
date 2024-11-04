@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../services/apikey/key.dart';
 
 class GamesPage extends StatelessWidget {
   @override
