@@ -26,17 +26,16 @@ class _StandingsPageState extends State<StandingsPage> {
         title: Text("Standings"),
       ),
       body: SingleChildScrollView(
-        child: Row(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Eastern Conference Column
-            Expanded(
-              child: _buildConferenceSection("Eastern", eastStandings),
-            ),
-            // Western Conference Column
-            Expanded(
-              child: _buildConferenceSection("Western", westStandings),
-            ),
+            // Eastern Conference Standings
+            _buildConferenceSection("Eastern Conference", eastStandings),
+            SizedBox(
+                height: 24.0), // Spacer between Eastern and Western standings
+            // Western Conference Standings
+            _buildConferenceSection("Western Conference", westStandings),
           ],
         ),
       ),
@@ -45,53 +44,68 @@ class _StandingsPageState extends State<StandingsPage> {
 
   Widget _buildConferenceSection(
       String title, Future<List<dynamic>> standingsFuture) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Conference Title
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Text(
-              title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Conference Title
+        Center(
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          // Standings List
-          FutureBuilder<List<dynamic>>(
-            future: standingsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text("Error: ${snapshot.error}"));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text("No data available"));
-              } else {
-                final sortedTeams = snapshot.data!
-                  ..sort((a, b) => (b['win']['total'] as int)
-                      .compareTo(a['win']['total'] as int));
+        ),
+        SizedBox(height: 8.0), // Space below the title
+        FutureBuilder<List<dynamic>>(
+          future: standingsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text("Error: ${snapshot.error}"));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text("No data available"));
+            } else {
+              final sortedTeams = snapshot.data!
+                ..sort((a, b) => (b['win']['total'] as int)
+                    .compareTo(a['win']['total'] as int));
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: sortedTeams.length,
-                  itemBuilder: (context, index) {
-                    final team = sortedTeams[index];
-                    return ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                      title: Text("${index + 1}. ${team['team']['name']}"),
-                      subtitle: Text(
-                          'Wins: ${team['win']['total']}, Losses: ${team['loss']['total']}'),
-                    );
-                  },
-                );
-              }
-            },
-          ),
-        ],
-      ),
+              return ListView.builder(
+                shrinkWrap:
+                    true, // Use shrinkWrap to make it take only the required height
+                physics:
+                    NeverScrollableScrollPhysics(), // Disable internal scrolling
+                itemCount: sortedTeams.length,
+                itemBuilder: (context, index) {
+                  final team = sortedTeams[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 4.0, horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Team Rank and Name
+                        Expanded(
+                          child: Text(
+                            "${index + 1}. ${team['team']['name']}",
+                            style: TextStyle(fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        // Win-Loss Record
+                        Text(
+                          "W: ${team['win']['total']}, L: ${team['loss']['total']}",
+                          style: TextStyle(fontSize: 16),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
+      ],
     );
   }
 }
