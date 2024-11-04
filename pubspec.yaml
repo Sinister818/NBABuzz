@@ -32,8 +32,8 @@ flutter:
     - assets/images/lightning.jpg
 
 flutter_native_splash:
-  color: "#ffffff"  # Background color for splash screen
-  image: assets/images/bball.png  # Replace with the path to your logo
+  color: "#ffffff"
+  image: assets/images/bball.png
   android: true
   ios: true
 
