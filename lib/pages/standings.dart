@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nbaBuzz/services/apiservice.dart';
-import '../services/apiservice.dart';
 
 class StandingsPage extends StatefulWidget {
   @override
@@ -27,10 +26,17 @@ class _StandingsPageState extends State<StandingsPage> {
         title: Text("Standings"),
       ),
       body: SingleChildScrollView(
-        child: Column(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildConferenceSection("Eastern Conference", eastStandings),
-            _buildConferenceSection("Western Conference", westStandings),
+            // Eastern Conference Column
+            Expanded(
+              child: _buildConferenceSection("Eastern", eastStandings),
+            ),
+            // Western Conference Column
+            Expanded(
+              child: _buildConferenceSection("Western", westStandings),
+            ),
           ],
         ),
       ),
@@ -39,48 +45,53 @@ class _StandingsPageState extends State<StandingsPage> {
 
   Widget _buildConferenceSection(
       String title, Future<List<dynamic>> standingsFuture) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Conference Title
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        FutureBuilder<List<dynamic>>(
-          future: standingsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Error: ${snapshot.error}"));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text("No data available"));
-            } else {
-              // Sort teams by number of wins in descending order
-              final sortedTeams = snapshot.data!
-                ..sort((a, b) => (b['win']['total'] as int)
-                    .compareTo(a['win']['total'] as int));
+          // Standings List
+          FutureBuilder<List<dynamic>>(
+            future: standingsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text("No data available"));
+              } else {
+                final sortedTeams = snapshot.data!
+                  ..sort((a, b) => (b['win']['total'] as int)
+                      .compareTo(a['win']['total'] as int));
 
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: sortedTeams.length,
-                itemBuilder: (context, index) {
-                  final team = sortedTeams[index];
-                  return ListTile(
-                    title: Text("${index + 1}. ${team['team']['name']}"),
-                    subtitle: Text(
-                        'Wins: ${team['win']['total']}, Losses: ${team['loss']['total']}'),
-                  );
-                },
-              );
-            }
-          },
-        ),
-      ],
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: sortedTeams.length,
+                  itemBuilder: (context, index) {
+                    final team = sortedTeams[index];
+                    return ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                      title: Text("${index + 1}. ${team['team']['name']}"),
+                      subtitle: Text(
+                          'Wins: ${team['win']['total']}, Losses: ${team['loss']['total']}'),
+                    );
+                  },
+                );
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }
