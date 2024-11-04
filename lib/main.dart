@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/games.dart';
 import 'pages/standings.dart';
-import 'pages/teams.dart';
 
 void main() {
   runApp(NbaBuzzApp());
@@ -68,13 +67,13 @@ class HomeScreen extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 68, vertical: 25),
+                  padding: EdgeInsets.symmetric(horizontal: 70, vertical: 70),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   )),
               child: Text('Standings', style: TextStyle(fontSize: 20))),
 
-          Padding(padding: EdgeInsets.only(top: 50)),
+          Padding(padding: EdgeInsets.only(top: 80)),
 
           //games button
           ElevatedButton(
@@ -83,25 +82,13 @@ class HomeScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => GamesPage()));
               },
               style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 25),
+                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 70),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   )),
               child: Text("Games", style: TextStyle(fontSize: 20))),
 
           Padding(padding: EdgeInsets.only(top: 50)),
-
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => TeamsPage()));
-              },
-              style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 80, vertical: 25),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  )),
-              child: Text("Teams", style: TextStyle(fontSize: 20)))
         ])));
   }
 }

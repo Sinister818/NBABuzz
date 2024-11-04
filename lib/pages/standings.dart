@@ -22,19 +22,14 @@ class _StandingsPageState extends State<StandingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Standings"),
-      ),
+      appBar: AppBar(title: Text("Standings")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Eastern Conference Standings
             _buildConferenceSection("Eastern Conference", eastStandings),
-            SizedBox(
-                height: 24.0), // Spacer between Eastern and Western standings
-            // Western Conference Standings
+            SizedBox(height: 24.0),
             _buildConferenceSection("Western Conference", westStandings),
           ],
         ),
@@ -47,14 +42,11 @@ class _StandingsPageState extends State<StandingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Conference Title
         Center(
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          child: Text(title,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
-        SizedBox(height: 8.0), // Space below the title
+        SizedBox(height: 8.0),
         FutureBuilder<List<dynamic>>(
           future: standingsFuture,
           builder: (context, snapshot) {
@@ -64,45 +56,36 @@ class _StandingsPageState extends State<StandingsPage> {
               return Center(child: Text("Error: ${snapshot.error}"));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Center(child: Text("No data available"));
-            } else {
-              final sortedTeams = snapshot.data!
-                ..sort((a, b) => (b['win']['total'] as int)
-                    .compareTo(a['win']['total'] as int));
-
-              return ListView.builder(
-                shrinkWrap:
-                    true, // Use shrinkWrap to make it take only the required height
-                physics:
-                    NeverScrollableScrollPhysics(), // Disable internal scrolling
-                itemCount: sortedTeams.length,
-                itemBuilder: (context, index) {
-                  final team = sortedTeams[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 4.0, horizontal: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Team Rank and Name
-                        Expanded(
-                          child: Text(
-                            "${index + 1}. ${team['team']['name']}",
-                            style: TextStyle(fontSize: 16),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        // Win-Loss Record
-                        Text(
-                          "W: ${team['win']['total']}, L: ${team['loss']['total']}",
-                          style: TextStyle(fontSize: 16),
-                          textAlign: TextAlign.right,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
             }
+
+            final sortedTeams = snapshot.data!
+              ..sort((a, b) => (b['win']['total'] as int)
+                  .compareTo(a['win']['total'] as int));
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: sortedTeams.length,
+              itemBuilder: (context, index) {
+                final team = sortedTeams[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 4.0, horizontal: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text("${index + 1}. ${team['team']['name']}",
+                            style: TextStyle(fontSize: 16)),
+                      ),
+                      Text(
+                          "W: ${team['win']['total']}, L: ${team['loss']['total']}",
+                          style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                );
+              },
+            );
           },
         ),
       ],
